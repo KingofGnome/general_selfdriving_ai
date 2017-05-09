@@ -4,6 +4,11 @@ from tflearn.layers.core import input_data, fully_connected, flatten
 from tflearn.layers.estimator import regression
 from tflearn.layers.normalization import batch_normalization
 
+
+"""
+This is NVIDIAs model with only one channel as input, batch norm after every layer
+and two outputs (throttle and turning)
+"""
 def tflearn_model():
     network = input_data(shape=[None, 200, 66, 1], name='input')
     network = batch_normalization(network, epsilon=0.001)

@@ -4,9 +4,11 @@ import time
 import cv2
 import os
 import json
+import pygame
+import sys
 import numpy as np
 
-class DataGatterer:
+class DataGatherer:
     def __init__(self, config):
         self.last_run_time = time.time() + 5 # Takes 5 seconds to start
         self.frametime = 1/config['fps']
@@ -32,7 +34,6 @@ class DataGatterer:
             self.y = []
 
 
-
     def run(self):
         if time.time() - self.last_run_time > self.frametime:
             self.last_run_time = time.time()
@@ -50,12 +51,27 @@ class DataGatterer:
 
 if __name__ == "__main__":
     config = json.loads(open('config.json', 'r').read())
-    gatterer = DataGatterer(config)
-    runtime = 600 #Run for 60 seconds,
+    gatterer = DataGatherer(config)
+    if(len(sys.argv) != 2):
+        print("Usage: python data_gattering.py seconds_to_run")
+    runtime = int(sys.argv[1])
     init_time = time.time()
     end_time = init_time + runtime
-    print("Starting data gathering")
+    print("Gattering data for {} seconds".format(runtime))
     while time.time() < end_time:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_p]:
+            print("Paused!")
+            pause_init = time.time()
+            time.sleep(0.5)
+            while not pygame.key.get_pressed()[pygame.K_p]:
+                time.sleep(0.1)
+            print("Unpaused!")
+            end_time += time.time() - pause_init
+        if keys[pygame.K_e]:
+            print("Stopping early!")
+            break
+
         gatterer.run()
     print("Finished!, got {} samples".format(len(gatterer.y)))
     gatterer.save_y()
