@@ -53,11 +53,11 @@ if __name__ == "__main__":
     config = json.loads(open('config.json', 'r').read())
     gatterer = DataGatherer(config)
     if(len(sys.argv) != 2):
-        print("Usage: python data_gattering.py seconds_to_run")
+        print("Usage: python data_gathering.py seconds_to_run")
     runtime = int(sys.argv[1])
     init_time = time.time()
     end_time = init_time + runtime
-    print("Gattering data for {} seconds".format(runtime))
+    print("Gathering data for {} seconds".format(runtime))
     while time.time() < end_time:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_p]:
