@@ -12,7 +12,7 @@ class DataGatherer:
     def __init__(self, config):
         self.last_run_time = time.time() + 5 # Takes 5 seconds to start
         self.frametime = 1/config['fps']
-        self.gamepad = Gamepad(1)
+        self.gamepad = Gamepad()
         self.screenshoter = Screenshoter(config['window_name'])
         self.data_path = os.path.join("data", config['save_dir'])
         self.samples = 0
