@@ -35,5 +35,6 @@ while True:
     prediction = model.predict([image.reshape(200, 66, 1)])[0]
 
     device.data.wAxisX = int(((prediction[0] / 2) + 0.5) * 32767) # Evil floating point bit level hacking
-    device.data.wAxisZRot = int(((((prediction[1] * -1) / 2) + 0.5) * 65535)) # What the fuck
+    device.data.wAxisZRot = int(((((prediction[1] * -1) / 2) + 0.5) * 32767)) # What the fuck
     device.update()
+    sleep(0.05)

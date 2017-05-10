@@ -34,6 +34,6 @@ def tflearn_model():
     network = fully_connected(network, 2, activation='tanh')
     network = regression(network, optimizer='adam', loss='mean_square', name='targets')
     model = tflearn.DNN(network, checkpoint_path='nvidia_model', max_checkpoints=1,
-                        tensorboard_verbose=2, tensorboard_dir='tflog')
+                        tensorboard_verbose=0, tensorboard_dir='tflog')
 
     return model

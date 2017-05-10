@@ -12,48 +12,59 @@ class DataGatherer:
     def __init__(self, config):
         self.last_run_time = time.time() + 5 # Takes 5 seconds to start
         self.frametime = 1/config['fps']
-        self.gamepad = Gamepad(0)
+        self.gamepad = Gamepad(1)
         self.screenshoter = Screenshoter(config['window_name'])
         self.data_path = os.path.join("data", config['save_dir'])
+        self.samples = 0
+        self.max_samples = config['max_samples_per_file']
         if not os.path.isdir(self.data_path):
             os.makedirs(self.data_path)
-            os.makedirs(os.path.join(self.data_path, 'raw'))
-            os.makedirs(os.path.join(self.data_path, 'cropped'))
-        self.data_path = os.path.join(self.data_path, 'raw')
 
-        _, _, filenames = next(os.walk(self.data_path))
+        *_, file_names = next(os.walk(self.data_path))
 
-        if filenames:
-            self.image_id = max(int(name.split(".")[0]) for name in filenames) + 1
+        if file_names:
+            self.fileid = max(int(filename.split(".")[0]) for filename in file_names)
         else:
-            self.image_id = 0
+            self.fileid = 0
 
-        if os.path.isfile("y_train.npy"):
-            self.y = list(np.load("y_train.npy"))
+        if os.path.isfile(os.path.join(self.data_path, str(self.fileid) + ".npy")):
+            self.y = list(np.load(os.path.join(self.data_path, str(self.fileid) + ".npy")))
+            self.samples = len(self.y)
+            if self.samples >= self.max_samples:
+                self.fileid += 1
+                self.y = []
+                self.samples = 0
         else:
             self.y = []
-
 
     def run(self):
         if time.time() - self.last_run_time > self.frametime:
             self.last_run_time = time.time()
+            self.gamepad.update_data()
             screen = self.screenshoter.grab_screenshot()
             screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
-            cv2.imwrite(os.path.join(self.data_path, str(self.image_id) + ".jpg"), screen)
-            print(os.path.join(self.data_path, str(self.image_id) + ".jpg"))
-            self.image_id += 1
-            self.gamepad.update_data()
-            self.y.append((self.gamepad.get_steer(), self.gamepad.get_acceleration()))
+            screen = cv2.resize(screen[:][200:464], (200, 66))
+            self.y.append([[self.gamepad.get_steer(), self.gamepad.get_acceleration()], screen])
+            self.samples += 1
+            print("Got sample!")
+
+            if self.samples >= self.max_samples: # Just to make sure
+                print("Saving!")
+                np.save(os.path.join(self.data_path, str(self.fileid) + ".npy"), self.y)
+                self.fileid += 1
+                self.y = []
+                self.samples = 0
 
     def save_y(self):
-        np.save("y_train.npy", self.y)
+        np.save(os.path.join(self.data_path, str(self.fileid) + ".npy"), self.y)
 
 
 if __name__ == "__main__":
-    config = json.loads(open('config.json', 'r').read())
-    gatterer = DataGatherer(config)
     if(len(sys.argv) != 2):
         print("Usage: python data_gathering.py seconds_to_run")
+
+    config = json.loads(open('config.json', 'r').read())
+    gatherer = DataGatherer(config)
     runtime = int(sys.argv[1])
     init_time = time.time()
     end_time = init_time + runtime
@@ -72,6 +83,6 @@ if __name__ == "__main__":
             print("Stopping early!")
             break
 
-        gatterer.run()
-    print("Finished!, got {} samples".format(len(gatterer.y)))
-    gatterer.save_y()
+        gatherer.run()
+    print("Finished!, got {} samples".format(len(gatherer.y)))
+    gatherer.save_y()

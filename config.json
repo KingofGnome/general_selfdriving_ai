@@ -3,5 +3,6 @@
   "model_name": "gtav",
   "model_save_name": "gtav.tflearn",
   "save_dir": "gtav",
-  "fps": 10
+  "max_samples_per_file": 5000,
+  "fps": 20
 }
