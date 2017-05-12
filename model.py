@@ -6,11 +6,11 @@ from tflearn.layers.normalization import batch_normalization
 
 
 """
-This is NVIDIAs model with only one channel as input, batch norm after every layer
-and two outputs (throttle and turning)
+This is NVIDIAs model with batch norm after every layer
+and two outputs (steer and throttle)
 """
 def tflearn_model():
-    network = input_data(shape=[None, 200, 66, 1], name='input')
+    network = input_data(shape=[None, 200, 66, 3], name='input')
     network = batch_normalization(network, epsilon=0.001)
     network = conv_2d(network, 24, 5, strides=2, activation='relu', padding='valid')
     network = batch_normalization(network)

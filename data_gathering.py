@@ -10,7 +10,7 @@ import numpy as np
 
 class DataGatherer:
     def __init__(self, config):
-        self.last_run_time = time.time() + 5 # Takes 5 seconds to start
+        self.last_run_time = time.time()
         self.frametime = 1/config['fps']
         self.gamepad = Gamepad()
         self.screenshoter = Screenshoter(config['window_name'])
@@ -37,12 +37,14 @@ class DataGatherer:
         else:
             self.y = []
 
+        print("Finished init, waiting 5 seconds before starting to get data")
+        time.sleep(5)
+
     def run(self):
         if time.time() - self.last_run_time > self.frametime:
             self.last_run_time = time.time()
             self.gamepad.update_data()
-            screen = self.screenshoter.grab_screenshot()
-            screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
+            screen = self.screenshoter.grab_screenshot() # TODO: Screenshot the right area to remove the need of cropping
             screen = cv2.resize(screen[:][200:464], (200, 66))
             self.y.append([[self.gamepad.get_steer(), self.gamepad.get_acceleration()], screen])
             self.samples += 1
@@ -50,7 +52,7 @@ class DataGatherer:
 
             if self.samples >= self.max_samples: # Just to make sure
                 print("Saving!")
-                np.save(os.path.join(self.data_path, str(self.fileid) + ".npy"), self.y)
+                self.save_y()
                 self.fileid += 1
                 self.y = []
                 self.samples = 0
@@ -59,6 +61,7 @@ class DataGatherer:
         np.save(os.path.join(self.data_path, str(self.fileid) + ".npy"), self.y)
 
 
+#  TODO: Fix pausing and early stopping
 if __name__ == "__main__":
     if(len(sys.argv) != 2):
         print("Usage: python data_gathering.py seconds_to_run")

@@ -17,6 +17,8 @@ class Gamepad:
         else:
             self.joystick = pygame.joystick.Joystick(0)
 
+        self.joystick.init()
+
     def update_data(self):
         pygame.event.pump()
 
@@ -25,4 +27,3 @@ class Gamepad:
 
     def get_acceleration(self):
         return self.joystick.get_axis(2)
-
