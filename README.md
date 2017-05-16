@@ -1,4 +1,5 @@
-My attempt at upgrading sentdexes gta v self-driving ai for GTA v, it was
+My attempt at upgrading sentdexes gta v self-driving ai for GTA v into a more
+general purpuse project for self driving cars in games, it was
 originally going to be a fork but i decided that starting from scratch
 would be better, some of the code is from his project (gave up on trying to do a
 ctypes-only screenshot after a lot of fighting with windows).
@@ -39,7 +40,7 @@ Now create an anaconda environment with python 3.5 with the command `conda creat
 
 Now it's time to install the requirements, make sure that your env is activated for this.
 
-Obrigatory packages:
+Obligatory packages:
 
  * Tensorflow GPU 1.0rc2, to make sure that everything will work install it with
  `pip install https://storage.googleapis.com/tensorflow/windows/gpu/tensorflow_gpu-1.0.0rc2-cp35-cp35m-win_amd64.whl`
