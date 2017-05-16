@@ -4,5 +4,6 @@
   "model_save_name": "gtav.tflearn",
   "save_dir": "gtav",
   "max_samples_per_file": 5000,
-  "fps": 20
+  "fps": 10,
+  "input_type": "dinput"
 }
