@@ -5,5 +5,6 @@
   "save_dir": "gtav",
   "max_samples_per_file": 5000,
   "fps": 10,
-  "input_type": "dinput"
+  "input_type": "dinput",
+  "output_type": "pyxinput"
 }

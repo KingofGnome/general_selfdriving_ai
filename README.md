@@ -15,16 +15,12 @@ Now it's time to install the requirements, make sure that your env is activated 
 
 Obligatory packages:
 
- * Tensorflow GPU 1.0rc2, to make sure that everything will work install it with
+ * Tensorflow GPU 1.0rc2 -
  `pip install https://storage.googleapis.com/tensorflow/windows/gpu/tensorflow_gpu-1.0.0rc2-cp35-cp35m-win_amd64.whl`
  * TFLearn. - `pip install tflearn`
  * OpenCV - `conda install opencv`
  * numpy - `conda install numpy`
-
-Packages used for input, you only need to install the one you use:
-
- * pygame -  `pip install opencv`, used for xinput controller input
- * pygame_sdl2 - Currently too hard to install, used for dinput controller input (once it's on pip i can use this for dinput and xinput)
+ * pygame_sdl2 - `pip install -i https://testpypi.python.org/pypi pygame_sdl2`
 
 
 There are two methods of output, one is harder to setup and has bad support for games but
@@ -41,8 +37,8 @@ The harder method that requires no bios changes is
 Now the easy way that might require you to make some bios changes or boot into test mode:
 
  * SCPVbus, this driver allows the creation of virtual xinput devices,
- to install it from [here](https://github.com/shauleiz/vXboxInterface/releases/download/v1.0.0.1/ScpVBus-x64.zip),
- open cmd with admin right, cd into the folder and run `devcon.exe install ScpVBus.inf Root\ScpVBus`.
+ download it from [here](https://github.com/shauleiz/vXboxInterface/releases/download/v1.0.0.1/ScpVBus-x64.zip) and extract it anywhere,
+ next open cmd with admin rights and cd into the folder and run `devcon.exe install ScpVBus.inf Root\ScpVBus`.
  If it works, NICE! if it doesn't, you'll have too google how to disable secureboot or if you want to
   disable it only until you reboot again, search for how to boot into test mode.
  * [PYXInput](https://github.com/bayangan1991/PYXInput) - `pip install PYXInput`

@@ -1,29 +1,27 @@
+import pygame_sdl2 as pygame
+
 class Gamepad:
     def __init__(self, provider):
         self.provider = provider
-        if provider == "dinput":
-            self.pygame = __import__("pygame_sdl2")
-        elif provider == "xinput":
-            self.pygame = __import__("pygame")
-        self.pygame.init()
-        self.pygame.joystick.init()
-        joystick_count = self.pygame.joystick.get_count()
+        pygame.init()
+        pygame.joystick.init()
+        joystick_count = pygame.joystick.get_count()
         if joystick_count < 1:
             raise Exception("No gamepad detected my dude")
 
         if joystick_count > 1:
             print("More then one joystick detected, please select the one you want to use")
             for i in range(joystick_count):
-                self.joystick = self.pygame.joystick.Joystick(i)
+                self.joystick = pygame.joystick.Joystick(i)
                 print("id: {}, name: {}".format(i, self.joystick.get_name()))
-            self.joystick = self.pygame.joystick.Joystick(int(input("Joystick id: ")))
+            self.joystick = pygame.joystick.Joystick(int(input("Joystick id: ")))
         else:
-            self.joystick = self.pygame.joystick.Joystick(0)
+            self.joystick = pygame.joystick.Joystick(0)
 
         self.joystick.init()
 
     def update_data(self):
-        self.pygame.event.pump()
+        pygame.event.pump()
 
     def get_steer(self):
         return self.joystick.get_axis(0)
