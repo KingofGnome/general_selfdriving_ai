@@ -1,5 +1,4 @@
 pygame
-pypiwin32
 numpy
 tqdm
 pyxinput

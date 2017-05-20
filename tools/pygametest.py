@@ -1,4 +1,4 @@
-import pygame
+import pygame_sdl2 as pygame
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -62,6 +62,8 @@ while done == False:
             print("Joystick button pressed.")
         if event.type == pygame.JOYBUTTONUP:
             print("Joystick button released.")
+        if event.type == pygame.JOYAXISMOTION:
+            print("Axis motion")
 
     # DRAWING STEP
     # First, clear the screen to white. Don't put other drawing commands
@@ -93,10 +95,12 @@ while done == False:
         textPrint.print(screen, "Number of axes: {}".format(axes))
         textPrint.indent()
 
+
         for i in range(axes):
             axis = joystick.get_axis(i)
             textPrint.print(screen, "Axis {} value: {:>6.3f}".format(i, axis))
         textPrint.unindent()
+
 
         buttons = joystick.get_numbuttons()
         textPrint.print(screen, "Number of buttons: {}".format(buttons))

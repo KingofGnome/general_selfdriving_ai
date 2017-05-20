@@ -1,19 +1,19 @@
-from input import Gamepad
-from screenshot import Screenshoter
+from input_data.controller import Gamepad
+from input_data.screen import ScreenGrabber
 import time
 import cv2
 import os
 import json
-import pygame
 import sys
 import numpy as np
+
 
 class DataGatherer:
     def __init__(self, config):
         self.last_run_time = time.time()
-        self.frametime = 1/config['fps']
+        self.frametime = 1 / config['fps']
         self.gamepad = Gamepad(config['input_type'])
-        self.screenshoter = Screenshoter(config['window_name'])
+        self.screenshoter = ScreenGrabber(config['window_name'])
         self.data_path = os.path.join("data", config['save_dir'])
         self.samples = 0
         self.max_samples = config['max_samples_per_file']
@@ -44,7 +44,7 @@ class DataGatherer:
         if time.time() - self.last_run_time > self.frametime:
             self.last_run_time = time.time()
             self.gamepad.update_data()
-            screen = self.screenshoter.grab_screenshot() # TODO: Screenshot the right area to remove the need of cropping
+            screen = self.screenshoter.grab() # TODO: Screenshot the right area to remove the need of cropping
             screen = cv2.resize(screen[:][200:464], (200, 66))
             self.y.append([[self.gamepad.get_steer(), self.gamepad.get_acceleration()], screen])
             self.samples += 1
@@ -68,24 +68,15 @@ if __name__ == "__main__":
 
     config = json.loads(open('config.json', 'r').read())
     gatherer = DataGatherer(config)
+
     runtime = int(sys.argv[1])
     init_time = time.time()
     end_time = init_time + runtime
-    print("Gathering data for {} seconds".format(runtime))
-    while time.time() < end_time:
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_p]:
-            print("Paused!")
-            pause_init = time.time()
-            time.sleep(0.5)
-            while not pygame.key.get_pressed()[pygame.K_p]:
-                time.sleep(0.1)
-            print("Unpaused!")
-            end_time += time.time() - pause_init
-        if keys[pygame.K_e]:
-            print("Stopping early!")
-            break
 
+    print("Gathering data for {} seconds".format(runtime))
+
+    while time.time() < end_time:
         gatherer.run()
+
     print("Finished!, got {} samples".format(len(gatherer.y)))
     gatherer.save_y()

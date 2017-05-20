@@ -1,9 +1,11 @@
-from screenshot import Screenshoter
+from input_data.screen import ScreenGrabber
 from model import tflearn_model
 from time import sleep
 import cv2
 import json
 import os
+
+
 
 config = json.loads(open("config.json", 'r').read())
 
@@ -13,20 +15,26 @@ sleep(3)
 model = tflearn_model()
 model.load(os.path.join('data', config['save_dir'], 'model', config['model_save_name']))
 
-"""
-If i import both people will need to have both installed, maybe a try; except would
-be more pythonic?
-"""
 if config['output_type'] == "pyxinput":
-    device = __import__("pyxinput_output").PYXInputController()
+    try:
+        from output.pyxinput import PYXInputController
+    except ImportError:
+        print("Failed to import PYXInputController, make sure you have everything set-up correctly")
+
+    device = PYXInputController()
 else:
-    device = __import__("vjoy_output").PyVjoyController()
+    try:
+        from output.vjoy import PyVjoyController
+    except ImportError:
+        print("Failed to import PYXInputController, make sure you have everything set-up correctly")
+
+    device = PyVjoyController()
 
 
-screenshoter = Screenshoter(config['window_name'])
+image_grabber = ScreenGrabber(config['window_name'])
 
 while True:
-    image = screenshoter.grab_screenshot()
+    image = image_grabber.grab()
     image = cv2.resize(image[:][200:464], (200, 66))
     prediction = model.predict([image.reshape(200, 66, 3)])[0]
     device.update(prediction)
